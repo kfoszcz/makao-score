@@ -8,10 +8,25 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="buttonStyle">
+    <style name="buttonStyle" parent="Base.Widget.AppCompat.Button">
         <item name="android:background">@color/colorPrimaryLight</item>
         <item name="android:textColor">@color/textPrimary</item>
         <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Text">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">serif</item>
+    </style>
+
+    <style name="Text.Primary">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/textPrimary</item>
+    </style>
+
+    <style name="Text.Secondary">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/textSecondary</item>
     </style>
 
 </resources>
