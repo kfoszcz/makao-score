@@ -1,5 +1,7 @@
 package com.kfoszcz.makaoscore.view;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -103,10 +105,12 @@ public class PlayerListActivity extends AppCompatActivity {
             private TextView initial;
             private TextView name;
             private ImageView drag;
+            private View root;
 
             public PlayerViewHolder(View itemView) {
                 super(itemView);
 
+                root = itemView;
                 checkbox = itemView.findViewById(R.id.chb_player_item);
                 initial = itemView.findViewById(R.id.txt_player_item_initial);
                 name = itemView.findViewById(R.id.txt_player_item_name);
@@ -115,7 +119,7 @@ public class PlayerListActivity extends AppCompatActivity {
                 drag.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View view, MotionEvent motionEvent) {
-                        if (MotionEventCompat.getActionMasked(motionEvent) == MotionEvent.ACTION_DOWN) {
+                        if (motionEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
                             touchHelper.startDrag(PlayerViewHolder.this);
                         }
                         return false;
@@ -147,6 +151,31 @@ public class PlayerListActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            }
+
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return false;
+            }
+
+            @Override
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+                    if (viewHolder instanceof PlayerAdapter.PlayerViewHolder) {
+                        PlayerAdapter.PlayerViewHolder holder = (PlayerAdapter.PlayerViewHolder) viewHolder;
+                        holder.root.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLightAlpha));
+                    }
+                }
+                super.onSelectedChanged(viewHolder, actionState);
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+                if (viewHolder instanceof PlayerAdapter.PlayerViewHolder) {
+                    PlayerAdapter.PlayerViewHolder holder = (PlayerAdapter.PlayerViewHolder) viewHolder;
+                    holder.root.setBackgroundColor(Color.WHITE);
+                }
             }
         };
     }
