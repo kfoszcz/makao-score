@@ -1,12 +1,15 @@
 package com.kfoszcz.makaoscore.view;
 
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -19,6 +22,7 @@ import com.kfoszcz.makaoscore.data.Player;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PlayerListActivity extends AppCompatActivity {
@@ -26,6 +30,8 @@ public class PlayerListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<Player> playerList;
     private LayoutInflater layoutInflater;
+    private PlayerAdapter adapter;
+    private ItemTouchHelper touchHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +55,7 @@ public class PlayerListActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        PlayerAdapter adapter = new PlayerAdapter();
+        adapter = new PlayerAdapter();
         recyclerView.setAdapter(adapter);
 
         DividerItemDecoration itemDecoration = new DividerItemDecoration(
@@ -65,6 +71,10 @@ public class PlayerListActivity extends AppCompatActivity {
         );
 
         recyclerView.addItemDecoration(itemDecoration);
+
+        touchHelper = new ItemTouchHelper(createTouchHelperCallback());
+        touchHelper.attachToRecyclerView(recyclerView);
+
     }
 
     private class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder> {
@@ -101,9 +111,43 @@ public class PlayerListActivity extends AppCompatActivity {
                 initial = itemView.findViewById(R.id.txt_player_item_initial);
                 name = itemView.findViewById(R.id.txt_player_item_name);
                 drag = itemView.findViewById(R.id.imv_player_item_drag);
+
+                drag.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        if (MotionEventCompat.getActionMasked(motionEvent) == MotionEvent.ACTION_DOWN) {
+                            touchHelper.startDrag(PlayerViewHolder.this);
+                        }
+                        return false;
+                    }
+                });
             }
 
         }
 
+    }
+
+    ItemTouchHelper.Callback createTouchHelperCallback() {
+        return new ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.DOWN | ItemTouchHelper.UP,
+                0
+        ) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                int fromPosition = viewHolder.getAdapterPosition();
+                int toPosition = target.getAdapterPosition();
+
+                if (fromPosition == toPosition)
+                    return false;
+
+                Collections.swap(playerList, fromPosition, toPosition);
+                adapter.notifyItemMoved(fromPosition, toPosition);
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            }
+        };
     }
 }
