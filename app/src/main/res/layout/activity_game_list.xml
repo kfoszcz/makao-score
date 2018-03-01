@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kfoszcz.makaoscore.GameListActivity">
+    tools:context="com.kfoszcz.makaoscore.view.GameListActivity">
 
     <Button
         android:id="@+id/btn_game_list_players"

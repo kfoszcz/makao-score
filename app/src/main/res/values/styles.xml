@@ -16,7 +16,7 @@
 
     <style name="Text">
         <item name="android:gravity">center_vertical</item>
-        <item name="android:fontFamily">serif</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="Text.Primary">
