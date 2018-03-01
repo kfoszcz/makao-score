@@ -2,6 +2,7 @@ package com.kfoszcz.makaoscore.view;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +20,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kfoszcz.makaoscore.R;
+import com.kfoszcz.makaoscore.data.MakaoDatabase;
 import com.kfoszcz.makaoscore.data.Player;
+import com.kfoszcz.makaoscore.logic.PlayerController;
 
 import org.w3c.dom.Text;
 
@@ -27,31 +30,42 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PlayerListActivity extends AppCompatActivity {
+public class PlayerListActivity extends AppCompatActivity implements PlayerViewInterface {
 
     private RecyclerView recyclerView;
     private List<Player> playerList;
     private LayoutInflater layoutInflater;
     private PlayerAdapter adapter;
     private ItemTouchHelper touchHelper;
+    private FloatingActionButton fabAdd;
+
+    private PlayerController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_list);
 
+        fabAdd = findViewById(R.id.fab_player_list_add);
         recyclerView = findViewById(R.id.rec_player_list);
         layoutInflater = getLayoutInflater();
 
-        List<Player> testPlayers = new ArrayList<>();
-        testPlayers.add(new Player("K", "Krzycho"));
-        testPlayers.add(new Player("M", "Mama"));
-        testPlayers.add(new Player("T", "Tata"));
+        controller = new PlayerController(
+                this,
+                MakaoDatabase.getDatabase(getApplicationContext()).dao()
+        );
 
-        setUpRecyclerView(testPlayers);
+        controller.getPlayerList();
+
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                controller.addButtonClicked();
+            }
+        });
     }
 
-    public void setUpRecyclerView(List<Player> data) {
+    public void setUpPlayerList(List<Player> data) {
         playerList = data;
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -77,6 +91,14 @@ public class PlayerListActivity extends AppCompatActivity {
         touchHelper = new ItemTouchHelper(createTouchHelperCallback());
         touchHelper.attachToRecyclerView(recyclerView);
 
+    }
+
+    @Override
+    public void playerAdded(Player player) {
+        playerList.add(player);
+        int position = playerList.size() - 1;
+        adapter.notifyItemInserted(position);
+        recyclerView.scrollToPosition(position);
     }
 
     private class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder> {
@@ -134,7 +156,7 @@ public class PlayerListActivity extends AppCompatActivity {
     ItemTouchHelper.Callback createTouchHelperCallback() {
         return new ItemTouchHelper.SimpleCallback(
                 ItemTouchHelper.DOWN | ItemTouchHelper.UP,
-                0
+                ItemTouchHelper.LEFT
         ) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -151,6 +173,11 @@ public class PlayerListActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                controller.deletePlayer(playerList.get(position));
+
+                playerList.remove(position);
+                adapter.notifyItemRemoved(position);
             }
 
             @Override

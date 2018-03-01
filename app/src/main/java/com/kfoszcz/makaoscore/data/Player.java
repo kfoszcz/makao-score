@@ -1,17 +1,31 @@
 package com.kfoszcz.makaoscore.data;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 /**
  * Created by Krzysztof on 2018-03-01.
  */
 
+@Entity
 public class Player {
 
+    @PrimaryKey(autoGenerate = true)
+    private int id;
     private String initial;
     private String name;
 
     public Player(String initial, String name) {
         this.initial = initial;
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getInitial() {
