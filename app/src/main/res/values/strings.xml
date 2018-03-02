@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Makao Score</string>
     <string name="players_btn">Players</string>
+    <string name="initial">Initial</string>
+    <string name="name">Name</string>
+    <string name="add_player">Add player</string>
+    <string name="add_player_save">Save player</string>
+    <string name="add_player_edit">Edit player</string>
 </resources>

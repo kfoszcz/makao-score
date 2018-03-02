@@ -16,7 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.PlayerListActivity"></activity>
+        <activity android:name=".view.PlayerListActivity" />
+        <activity android:name=".view.AddPlayerActivity"
+            android:label="@string/add_player"/>
     </application>
 
 </manifest>

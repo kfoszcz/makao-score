@@ -3,6 +3,7 @@ package com.kfoszcz.makaoscore.data;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import java.util.List;
@@ -17,7 +18,10 @@ public interface MakaoDao {
     @Query("SELECT * FROM player")
     List<Player> getAllPlayers();
 
-    @Insert
+    @Query("SELECT * FROM player WHERE id = :id")
+    Player getPlayerById(int id);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertPlayers(Player player);
 
     @Delete

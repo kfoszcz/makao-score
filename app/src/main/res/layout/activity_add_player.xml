@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context="com.kfoszcz.makaoscore.view.AddPlayerActivity">
+
+    <android.support.design.widget.TextInputEditText
+        style="@style/Text.Primary"
+        android:id="@+id/inp_add_player_initial"
+        android:maxLength="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/initial"/>
+
+    <android.support.design.widget.TextInputEditText
+        style="@style/Text.Primary"
+        android:id="@+id/inp_add_player_name"
+        android:maxLength="20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/inp_add_player_initial"
+        android:hint="@string/name"/>
+
+    <Button
+        style="@style/buttonStyle"
+        android:id="@+id/btn_add_player_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/inp_add_player_name"
+        android:layout_marginTop="16dp"
+        android:text="@string/add_player" />
+
+</RelativeLayout>

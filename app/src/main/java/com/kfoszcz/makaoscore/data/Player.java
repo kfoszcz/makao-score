@@ -3,12 +3,14 @@ package com.kfoszcz.makaoscore.data;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.io.Serializable;
+
 /**
  * Created by Krzysztof on 2018-03-01.
  */
 
 @Entity
-public class Player {
+public class Player implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;

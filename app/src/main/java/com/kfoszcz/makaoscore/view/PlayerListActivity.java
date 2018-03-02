@@ -1,10 +1,9 @@
 package com.kfoszcz.makaoscore.view;
 
-import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -22,11 +21,8 @@ import android.widget.TextView;
 import com.kfoszcz.makaoscore.R;
 import com.kfoszcz.makaoscore.data.MakaoDatabase;
 import com.kfoszcz.makaoscore.data.Player;
-import com.kfoszcz.makaoscore.logic.PlayerController;
+import com.kfoszcz.makaoscore.logic.PlayerListController;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,7 +35,7 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
     private ItemTouchHelper touchHelper;
     private FloatingActionButton fabAdd;
 
-    private PlayerController controller;
+    private PlayerListController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +46,10 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
         recyclerView = findViewById(R.id.rec_player_list);
         layoutInflater = getLayoutInflater();
 
-        controller = new PlayerController(
+        controller = new PlayerListController(
                 this,
                 MakaoDatabase.getDatabase(getApplicationContext()).dao()
         );
-
-        controller.getPlayerList();
 
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +57,12 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
                 controller.addButtonClicked();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        controller.getPlayerList();
     }
 
     public void setUpPlayerList(List<Player> data) {
@@ -99,6 +99,13 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
         int position = playerList.size() - 1;
         adapter.notifyItemInserted(position);
         recyclerView.scrollToPosition(position);
+    }
+
+    @Override
+    public void startAddPlayerActivity(int playerId) {
+        Intent intent = new Intent(this, AddPlayerActivity.class);
+        intent.putExtra("playerId", playerId);
+        startActivity(intent);
     }
 
     private class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder> {
@@ -145,6 +152,15 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
                             touchHelper.startDrag(PlayerViewHolder.this);
                         }
                         return false;
+                    }
+                });
+
+                root.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        controller.playerRowClicked(
+                                playerList.get(PlayerViewHolder.this.getAdapterPosition())
+                        );
                     }
                 });
             }

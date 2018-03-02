@@ -13,4 +13,6 @@ public interface PlayerViewInterface {
     void setUpPlayerList(List<Player> playerList);
 
     void playerAdded(Player player);
+
+    void startAddPlayerActivity(int playerId);
 }
