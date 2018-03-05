@@ -15,4 +15,6 @@ public interface PlayerViewInterface {
     void playerAdded(Player player);
 
     void startAddPlayerActivity(int playerId);
+
+    void showToast(String message);
 }

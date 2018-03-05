@@ -17,12 +17,14 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kfoszcz.makaoscore.R;
 import com.kfoszcz.makaoscore.data.MakaoDatabase;
 import com.kfoszcz.makaoscore.data.Player;
 import com.kfoszcz.makaoscore.logic.PlayerListController;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,6 +36,7 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
     private PlayerAdapter adapter;
     private ItemTouchHelper touchHelper;
     private FloatingActionButton fabAdd;
+    private FloatingActionButton fabStart;
 
     private PlayerListController controller;
 
@@ -43,6 +46,7 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
         setContentView(R.layout.activity_player_list);
 
         fabAdd = findViewById(R.id.fab_player_list_add);
+        fabStart = findViewById(R.id.fab_player_list_game_start);
         recyclerView = findViewById(R.id.rec_player_list);
         layoutInflater = getLayoutInflater();
 
@@ -55,6 +59,20 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
             @Override
             public void onClick(View view) {
                 controller.addButtonClicked();
+            }
+        });
+
+        fabStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<Player> selectedPlayers = new ArrayList<>();
+
+                for (Player p : playerList) {
+                    if (p.isSelected())
+                        selectedPlayers.add(p);
+                }
+
+                controller.startButtonClicked(selectedPlayers);
             }
         });
     }
@@ -108,6 +126,11 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
         startActivity(intent);
     }
 
+    @Override
+    public void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
     private class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder> {
 
         @Override
@@ -152,6 +175,14 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
                             touchHelper.startDrag(PlayerViewHolder.this);
                         }
                         return false;
+                    }
+                });
+
+                checkbox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        playerList.get(PlayerViewHolder.this.getAdapterPosition())
+                                .setSelected(checkbox.isChecked());
                     }
                 });
 

@@ -1,6 +1,7 @@
 package com.kfoszcz.makaoscore.data;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.io.Serializable;
@@ -17,9 +18,13 @@ public class Player implements Serializable {
     private String initial;
     private String name;
 
+    @Ignore
+    private boolean selected;
+
     public Player(String initial, String name) {
         this.initial = initial;
         this.name = name;
+        this.selected = false;
     }
 
     public int getId() {
@@ -44,5 +49,13 @@ public class Player implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

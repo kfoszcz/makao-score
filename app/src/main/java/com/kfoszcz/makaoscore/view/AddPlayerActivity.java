@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kfoszcz.makaoscore.R;
@@ -15,8 +16,8 @@ import com.kfoszcz.makaoscore.logic.AddPlayerController;
 public class AddPlayerActivity extends AppCompatActivity
         implements AddPlayerInterface, View.OnClickListener {
 
-    private TextInputEditText playerInitial;
-    private TextInputEditText playerName;
+    private EditText playerInitial;
+    private EditText playerName;
     private Button confirmButton;
     private Player editedPlayer;
 
