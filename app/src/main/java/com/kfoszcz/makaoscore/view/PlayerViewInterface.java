@@ -16,5 +16,7 @@ public interface PlayerViewInterface {
 
     void startAddPlayerActivity(int playerId);
 
+    void startScoreListActivity(int gameId);
+
     void showToast(String message);
 }

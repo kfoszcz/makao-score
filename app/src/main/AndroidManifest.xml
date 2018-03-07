@@ -17,8 +17,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.PlayerListActivity" />
-        <activity android:name=".view.AddPlayerActivity"
-            android:label="@string/add_player"/>
+        <activity
+            android:name=".view.AddPlayerActivity"
+            android:label="@string/add_player" />
+        <activity android:name=".view.ScoreListActivity"></activity>
     </application>
 
 </manifest>

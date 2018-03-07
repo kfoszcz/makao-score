@@ -127,6 +127,13 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
     }
 
     @Override
+    public void startScoreListActivity(int gameId) {
+        Intent intent = new Intent(this, ScoreListActivity.class);
+        intent.putExtra("gameId", gameId);
+        startActivity(intent);
+    }
+
+    @Override
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }

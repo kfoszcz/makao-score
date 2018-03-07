@@ -2,10 +2,13 @@ package com.kfoszcz.makaoscore.logic;
 
 import android.os.AsyncTask;
 
+import com.kfoszcz.makaoscore.data.Game;
 import com.kfoszcz.makaoscore.data.MakaoDao;
 import com.kfoszcz.makaoscore.data.Player;
+import com.kfoszcz.makaoscore.data.PlayerGame;
 import com.kfoszcz.makaoscore.view.PlayerViewInterface;
 
+import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -45,19 +48,7 @@ public class PlayerListController {
         }
 
         else {
-            StringBuilder builder = new StringBuilder();
-            ListIterator<Player> iterator = selectedPlayers.listIterator();
-            while (iterator.hasNext()) {
-                int i = iterator.nextIndex();
-                Player p = iterator.next();
-                builder.append(i + 1);
-                builder.append(". ");
-                builder.append(p.getName());
-
-                if (iterator.hasNext())
-                    builder.append("\n");
-            }
-            view.showToast(builder.toString());
+            (new InsertGameAndPlayersTask()).execute(selectedPlayers);
         }
     }
 
@@ -83,6 +74,28 @@ public class PlayerListController {
             return null;
         }
 
+    }
+
+    private class InsertGameAndPlayersTask extends  AsyncTask<List<Player>, Void, Integer> {
+
+        @Override
+        protected Integer doInBackground(List<Player>[] lists) {
+            Game game = new Game(new Date(), false);
+            int gameId = (int) dataSource.insertGame(game);
+
+            for (int i = 0; i < lists[0].size(); i++) {
+                dataSource.instertPlayerGame(
+                        new PlayerGame(gameId, lists[0].get(i).getId(), i + 1)
+                );
+            }
+
+            return gameId;
+        }
+
+        @Override
+        protected void onPostExecute(Integer gameId) {
+            view.startScoreListActivity(gameId);
+        }
     }
 
 }

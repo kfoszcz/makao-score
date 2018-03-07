@@ -26,4 +26,23 @@ public interface MakaoDao {
 
     @Delete
     void deletePlayer(Player player);
+
+    @Query("SELECT * FROM game ORDER BY startDate DESC")
+    List<Game> getAllGames();
+
+    @Query("SELECT * FROM game WHERE id = :id")
+    Game getGameById(int id);
+
+    @Insert
+    long insertGame(Game game);
+
+    @Query("SELECT * FROM playergame " +
+            "JOIN player ON playergame.playerIndex = player.id " +
+            "WHERE gameId = :gameId " +
+            "ORDER BY playerIndex ASC")
+    Player[] getPlayersInGame(int gameId);
+
+    @Insert
+    long instertPlayerGame(PlayerGame playerGame);
+
 }
