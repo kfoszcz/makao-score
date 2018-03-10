@@ -6,4 +6,6 @@
     <string name="add_player">Add player</string>
     <string name="add_player_save">Save player</string>
     <string name="add_player_edit">Edit player</string>
+    <string name="title_activity_add_score">AddScoreActivity</string>
+    <string name="deal">Deal</string>
 </resources>

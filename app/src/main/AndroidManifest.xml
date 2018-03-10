@@ -23,6 +23,7 @@
         <activity
             android:name=".view.ScoreListActivity"
             android:parentActivityName=".view.GameListActivity" />
+        <activity android:name=".view.AddScoreActivity"></activity>
     </application>
 
 </manifest>
