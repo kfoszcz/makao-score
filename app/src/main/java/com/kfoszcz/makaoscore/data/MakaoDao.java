@@ -37,12 +37,18 @@ public interface MakaoDao {
     long insertGame(Game game);
 
     @Query("SELECT * FROM playergame " +
-            "JOIN player ON playergame.playerIndex = player.id " +
+            "JOIN player ON playergame.playerId = player.id " +
             "WHERE gameId = :gameId " +
             "ORDER BY playerIndex ASC")
     Player[] getPlayersInGame(int gameId);
 
     @Insert
     long instertPlayerGame(PlayerGame playerGame);
+
+    @Query("SELECT game.*, COUNT(*) AS playerCount FROM game " +
+            "JOIN playergame ON game.id = playergame.gameId " +
+            "GROUP BY game.id " +
+            "ORDER BY startDate DESC")
+    List<GameWithPlayers> getAllGamesWithPlayerCount();
 
 }

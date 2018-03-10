@@ -20,7 +20,9 @@
         <activity
             android:name=".view.AddPlayerActivity"
             android:label="@string/add_player" />
-        <activity android:name=".view.ScoreListActivity"></activity>
+        <activity
+            android:name=".view.ScoreListActivity"
+            android:parentActivityName=".view.GameListActivity" />
     </application>
 
 </manifest>

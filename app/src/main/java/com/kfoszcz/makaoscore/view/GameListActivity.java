@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.kfoszcz.makaoscore.R;
 import com.kfoszcz.makaoscore.data.Game;
+import com.kfoszcz.makaoscore.data.GameWithPlayers;
 import com.kfoszcz.makaoscore.data.MakaoDatabase;
 import com.kfoszcz.makaoscore.logic.GameListController;
 
@@ -30,7 +31,7 @@ public class GameListActivity extends AppCompatActivity implements View.OnClickL
     private LayoutInflater layoutInflater;
     private GameAdapter adapter;
 
-    private List<Game> gameList;
+    private List<GameWithPlayers> gameList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +65,7 @@ public class GameListActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void setUpGameList(List<Game> games) {
+    public void setUpGameList(List<GameWithPlayers> games) {
         gameList = games;
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -105,12 +106,13 @@ public class GameListActivity extends AppCompatActivity implements View.OnClickL
 
         @Override
         public void onBindViewHolder(GameViewHolder holder, int position) {
-            Game currentGame = gameList.get(position);
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            holder.date.setText(format.format(currentGame.getStartDate()));
-
-            // TODO
-            holder.playerCount.setText("3");
+            GameWithPlayers currentGame = gameList.get(position);
+            DateFormat format = new SimpleDateFormat(
+                    "EEE, MMM d, HH:mm",
+                    getResources().getConfiguration().locale
+            );
+            holder.date.setText(format.format(currentGame.game.getStartDate()));
+            holder.playerCount.setText(Integer.toString(currentGame.playerCount));
         }
 
         @Override
@@ -134,7 +136,7 @@ public class GameListActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onClick(View view) {
                 controller.gameRowClicked(
-                        gameList.get(this.getAdapterPosition())
+                        gameList.get(this.getAdapterPosition()).game
                 );
             }
         }

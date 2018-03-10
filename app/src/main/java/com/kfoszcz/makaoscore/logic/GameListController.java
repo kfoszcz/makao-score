@@ -3,6 +3,7 @@ package com.kfoszcz.makaoscore.logic;
 import android.os.AsyncTask;
 
 import com.kfoszcz.makaoscore.data.Game;
+import com.kfoszcz.makaoscore.data.GameWithPlayers;
 import com.kfoszcz.makaoscore.data.MakaoDao;
 import com.kfoszcz.makaoscore.view.GameViewInterface;
 
@@ -30,15 +31,15 @@ public class GameListController {
         view.startScoreListActivity(game.getId());
     }
 
-    private class LoadGamesTask extends AsyncTask<Void, Void, List<Game>> {
+    private class LoadGamesTask extends AsyncTask<Void, Void, List<GameWithPlayers>> {
 
         @Override
-        protected List<Game> doInBackground(Void... voids) {
-            return dataSource.getAllGames();
+        protected List<GameWithPlayers> doInBackground(Void... voids) {
+            return dataSource.getAllGamesWithPlayerCount();
         }
 
         @Override
-        protected void onPostExecute(List<Game> games) {
+        protected void onPostExecute(List<GameWithPlayers> games) {
             view.setUpGameList(games);
         }
 
