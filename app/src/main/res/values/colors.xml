@@ -8,4 +8,8 @@
     <color name="textSecondary">#757575</color>
     <color name="colorDivider">#BDBDBD</color>
     <color name="colorPrimaryLightAlpha">#80B2DFDB</color>
+    <color name="btnDefault">#DCDCDC</color>
+    <color name="btnSuccess">#00c853</color>
+    <color name="btnHalf">#f9a825</color>
+    <color name="btnFail">#dd2c00</color>
 </resources>

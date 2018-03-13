@@ -1,16 +1,21 @@
 package com.kfoszcz.makaoscore.view;
 
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kfoszcz.makaoscore.R;
 import com.kfoszcz.makaoscore.data.MakaoDatabase;
@@ -52,6 +57,27 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_score_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.menu_score_list_add:
+                controller.menuAddPressed();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    @Override
     public void setUpScoreList(Player[] players) {
 
         ScoreRowView header = new ScoreRowView(
@@ -80,6 +106,14 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
             ((TextView) header.getScoreCellView(i + 1)).setText(players[i].getInitial());
         }
 
+    }
+
+    @Override
+    public void startAddScoreActivity(int dealId) {
+        Intent intent = new Intent(this, AddScoreActivity.class);
+        intent.putExtra("gameId", gameId);
+        intent.putExtra("dealId", dealId);
+        startActivity(intent);
     }
 
     public int dipToPixels(int dip) {

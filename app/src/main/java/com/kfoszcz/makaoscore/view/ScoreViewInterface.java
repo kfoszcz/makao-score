@@ -10,4 +10,6 @@ public interface ScoreViewInterface {
 
     void setUpScoreList(Player[] players);
 
+    void startAddScoreActivity(int dealId);
+
 }

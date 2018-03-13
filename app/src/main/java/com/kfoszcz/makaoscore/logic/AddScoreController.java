@@ -4,31 +4,30 @@ import android.os.AsyncTask;
 
 import com.kfoszcz.makaoscore.data.MakaoDao;
 import com.kfoszcz.makaoscore.data.Player;
-import com.kfoszcz.makaoscore.view.ScoreViewInterface;
+import com.kfoszcz.makaoscore.view.AddScoreInterface;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
- * Created by Krzysztof on 2018-03-07.
+ * Created by Krzysztof on 2018-03-11.
  */
 
-public class ScoreListController {
+public class AddScoreController {
 
-    private ScoreViewInterface view;
+    private AddScoreInterface view;
     private MakaoDao dataSource;
 
-    public ScoreListController(ScoreViewInterface view, MakaoDao dataSource) {
+    public AddScoreController(AddScoreInterface view, MakaoDao dataSource) {
         this.view = view;
         this.dataSource = dataSource;
     }
 
-    public void getScoreList(int gameId) {
-        (new LoadScoresTask()).execute(gameId);
+    public void getPlayerList(int gameId) {
+        (new LoadPlayersTask()).execute(gameId);
     }
 
-    public void menuAddPressed() {
-        view.startAddScoreActivity(0);
-    }
-
-    private class LoadScoresTask extends AsyncTask<Integer, Void, Player[]> {
+    private class LoadPlayersTask extends AsyncTask<Integer, Void, Player[]> {
 
         @Override
         protected Player[] doInBackground(Integer... integers) {
@@ -38,7 +37,7 @@ public class ScoreListController {
 
         @Override
         protected void onPostExecute(Player[] players) {
-            view.setUpScoreList(players);
+            view.setUpInputList(new ArrayList<>(Arrays.asList(players)));
         }
     }
 

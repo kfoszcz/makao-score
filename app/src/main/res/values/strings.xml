@@ -8,4 +8,5 @@
     <string name="add_player_edit">Edit player</string>
     <string name="title_activity_add_score">AddScoreActivity</string>
     <string name="deal">Deal</string>
+    <string name="menu_add">Add</string>
 </resources>
