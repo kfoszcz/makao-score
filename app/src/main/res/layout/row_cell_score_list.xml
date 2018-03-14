@@ -12,8 +12,8 @@
 
         <TextView
             android:id="@+id/txt_score_declared"
-            style="@style/Text.Secondary"
-            android:layout_width="20dp"
+            style="@style/Text.Declared"
+            android:layout_width="24dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             android:layout_marginRight="4dp"
@@ -21,8 +21,8 @@
 
         <TextView
             android:id="@+id/txt_score_points"
-            style="@style/Text.Primary"
-            android:layout_width="40dp"
+            style="@style/Text.Points"
+            android:layout_width="48dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/txt_score_declared"

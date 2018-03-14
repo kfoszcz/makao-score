@@ -6,17 +6,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kfoszcz.makaoscore.R;
 import com.kfoszcz.makaoscore.data.MakaoDatabase;
 import com.kfoszcz.makaoscore.data.Player;
 import com.kfoszcz.makaoscore.data.Score;
+import com.kfoszcz.makaoscore.data.ScoreRow;
 import com.kfoszcz.makaoscore.logic.AddScoreController;
 
 import java.util.List;
@@ -32,6 +39,7 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
     private int dealId;
 
     private List<Player> playerList;
+    private ScoreRow scoreRow;
 
     private static int[] buttonColors = {
             R.color.btnDefault,
@@ -62,11 +70,52 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
         gameId = getIntent().getIntExtra("gameId", 0);
         dealId = getIntent().getIntExtra("dealId", 0);
 
-        controller.getPlayerList(gameId);
+        controller.getPlayerList(gameId, dealId);
     }
 
-    public void setUpInputList(List<Player> players) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_add_score, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.menu_add_score_list:
+                finish();
+
+            case R.id.menu_add_score_save:
+                int dealText = dealNumber.getText().toString().isEmpty()
+                        ? 0 : Integer.parseInt(dealNumber.getText().toString());
+                if (dealText <= 0) {
+                    Toast.makeText(this, "Deal number must be > 0", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+                dealId = dealText;
+                for (int i = 0; i < scoreRow.getScores().length; i++) {
+                    scoreRow.getScores()[i].setDealId(dealId);
+                    scoreRow.getScores()[i].calculateAndSetScore();
+                }
+
+                controller.menuSavePressed(scoreRow);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    public void setUpInputList(List<Player> players, ScoreRow row) {
         playerList = players;
+        scoreRow = row;
+
+        if (row.getDealId() != 0)
+            dealNumber.setText(Integer.toString(row.getDealId()));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -74,20 +123,27 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
         adapter = new PlayerScoreAdapter();
         recyclerView.setAdapter(adapter);
 
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(
-                recyclerView.getContext(),
-                layoutManager.getOrientation()
-        );
+        if (recyclerView.getItemDecorationAt(0) == null) {
+            DividerItemDecoration itemDecoration = new DividerItemDecoration(
+                    recyclerView.getContext(),
+                    layoutManager.getOrientation()
+            );
 
-        itemDecoration.setDrawable(
-                ContextCompat.getDrawable(
-                        AddScoreActivity.this,
-                        R.drawable.divider_horizontal
-                )
-        );
+            itemDecoration.setDrawable(
+                    ContextCompat.getDrawable(
+                            AddScoreActivity.this,
+                            R.drawable.divider_horizontal
+                    )
+            );
 
-        recyclerView.addItemDecoration(itemDecoration);
+            recyclerView.addItemDecoration(itemDecoration);
+        }
 
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 
     private class PlayerScoreAdapter
@@ -103,6 +159,10 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
         public void onBindViewHolder(PlayerScoreAdapter.PlayerScoreViewHolder holder, int position) {
             Player currentPlayer = playerList.get(position);
             holder.initial.setText(currentPlayer.getInitial());
+            if (scoreRow.getScores()[position].getDeclared() != -1) {
+                holder.declared.setText(Integer.toString(scoreRow.getScores()[position].getDeclared()));
+            }
+            holder.toggleScoreType(scoreRow.getScores()[position].getScoreType());
         }
 
         @Override
@@ -114,12 +174,14 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
 
             private ImageButton[] buttons;
             private TextView initial;
+            private EditText declared;
             private int scoreType = Score.SCORE_NONE;
 
             public PlayerScoreViewHolder(View itemView) {
                 super(itemView);
 
                 initial = itemView.findViewById(R.id.item_add_score_initial);
+                declared = itemView.findViewById(R.id.item_add_score_declared);
                 buttons = new ImageButton[5];
                 buttons[4] = itemView.findViewById(R.id.item_add_score_btn_success);
                 buttons[3] = itemView.findViewById(R.id.item_add_score_btn_half_high);
@@ -129,6 +191,27 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
                 for (int i = 1; i < 5; i++) {
                     buttons[i].setOnClickListener(this);
                 }
+
+                declared.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        int value = editable.toString().isEmpty()
+                                ? -1 : Integer.parseInt(editable.toString());
+
+                        scoreRow.getScores()[PlayerScoreViewHolder.this.getAdapterPosition()]
+                                .setDeclared(value);
+                    }
+                });
             }
 
             @Override
@@ -159,10 +242,12 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
 
                 if (newType == scoreType) {
                     scoreType = Score.SCORE_NONE;
+                    scoreRow.getScores()[PlayerScoreViewHolder.this.getAdapterPosition()].setScoreType(scoreType);
                 }
                 else {
                     buttons[newType].setBackgroundColor(getResources().getColor(buttonColors[newType]));
                     scoreType = newType;
+                    scoreRow.getScores()[PlayerScoreViewHolder.this.getAdapterPosition()].setScoreType(scoreType);
                 }
             }
         }

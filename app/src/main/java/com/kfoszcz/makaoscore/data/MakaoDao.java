@@ -43,12 +43,29 @@ public interface MakaoDao {
     Player[] getPlayersInGame(int gameId);
 
     @Insert
-    long instertPlayerGame(PlayerGame playerGame);
+    long insertPlayerGame(PlayerGame playerGame);
 
     @Query("SELECT game.*, COUNT(*) AS playerCount FROM game " +
             "JOIN playergame ON game.id = playergame.gameId " +
             "GROUP BY game.id " +
             "ORDER BY startDate DESC")
     List<GameWithPlayers> getAllGamesWithPlayerCount();
+
+    @Query("SELECT score.*, player.*, playergame.playerIndex FROM score " +
+            "JOIN playergame ON playergame.playerId = score.playerId AND playergame.gameId = score.gameId " +
+            "JOIN player ON player.id = playergame.playerId " +
+            "WHERE score.gameId = :gameId " +
+            "ORDER BY dealId ASC, playerIndex ASC")
+    List<ScoreWithPlayer> getScoresForGame(int gameId);
+
+    @Query("SELECT score.*, player.*, playergame.playerIndex FROM score " +
+            "JOIN playergame ON playergame.playerId = score.playerId AND playergame.gameId = score.gameId " +
+            "JOIN player ON player.id = playergame.playerId " +
+            "WHERE score.gameId = :gameId AND dealId = :dealId " +
+            "ORDER BY dealId ASC, playerIndex ASC")
+    ScoreWithPlayer[] getScoresForDeal(int gameId, int dealId);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void inesrtScores(Score... scores);
 
 }

@@ -10,7 +10,6 @@ import com.kfoszcz.makaoscore.view.PlayerViewInterface;
 
 import java.util.Date;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Created by Krzysztof on 2018-03-01.
@@ -84,8 +83,8 @@ public class PlayerListController {
             int gameId = (int) dataSource.insertGame(game);
 
             for (int i = 0; i < lists[0].size(); i++) {
-                dataSource.instertPlayerGame(
-                        new PlayerGame(gameId, lists[0].get(i).getId(), i + 1)
+                dataSource.insertPlayerGame(
+                        new PlayerGame(gameId, lists[0].get(i).getId(), i)
                 );
             }
 

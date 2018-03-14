@@ -92,22 +92,24 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
         adapter = new PlayerAdapter();
         recyclerView.setAdapter(adapter);
 
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(
-                recyclerView.getContext(),
-                layoutManager.getOrientation()
-        );
+        if (recyclerView.getItemDecorationAt(0) == null) {
+            DividerItemDecoration itemDecoration = new DividerItemDecoration(
+                    recyclerView.getContext(),
+                    layoutManager.getOrientation()
+            );
 
-        itemDecoration.setDrawable(
-                ContextCompat.getDrawable(
-                        PlayerListActivity.this,
-                        R.drawable.divider_horizontal
-                )
-        );
+            itemDecoration.setDrawable(
+                    ContextCompat.getDrawable(
+                            PlayerListActivity.this,
+                            R.drawable.divider_horizontal
+                    )
+            );
 
-        recyclerView.addItemDecoration(itemDecoration);
+            recyclerView.addItemDecoration(itemDecoration);
 
-        touchHelper = new ItemTouchHelper(createTouchHelperCallback());
-        touchHelper.attachToRecyclerView(recyclerView);
+            touchHelper = new ItemTouchHelper(createTouchHelperCallback());
+            touchHelper.attachToRecyclerView(recyclerView);
+        }
 
     }
 

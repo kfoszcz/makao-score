@@ -9,4 +9,8 @@
     <string name="title_activity_add_score">AddScoreActivity</string>
     <string name="deal">Deal</string>
     <string name="menu_add">Add</string>
+    <string name="menu_save">Save</string>
+    <string name="add_score">Add score</string>
+    <string name="score_list">Score list</string>
+    <string name="menu_list">List</string>
 </resources>

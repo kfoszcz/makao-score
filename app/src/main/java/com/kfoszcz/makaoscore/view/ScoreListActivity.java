@@ -1,11 +1,16 @@
 package com.kfoszcz.makaoscore.view;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +25,13 @@ import android.widget.Toast;
 import com.kfoszcz.makaoscore.R;
 import com.kfoszcz.makaoscore.data.MakaoDatabase;
 import com.kfoszcz.makaoscore.data.Player;
+import com.kfoszcz.makaoscore.data.Score;
+import com.kfoszcz.makaoscore.data.ScoreRow;
 import com.kfoszcz.makaoscore.logic.ScoreListController;
+
+import org.w3c.dom.Text;
+
+import java.util.List;
 
 public class ScoreListActivity extends AppCompatActivity implements ScoreViewInterface {
 
@@ -29,7 +40,11 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
     private RecyclerView recyclerView;
     private View verticalSeparator;
     private ScoreListController controller;
+    private ScoreRowAdapter adapter;
+
     private int gameId;
+    private Player[] players;
+    private List<ScoreRow> scoreList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +61,14 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
                 MakaoDatabase.getDatabase(getApplicationContext()).dao()
         );
 
+        gameId = getIntent().getIntExtra("gameId", 0);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        gameId = getIntent().getIntExtra("gameId", 0);
+
         if (gameId > 0)
             controller.getScoreList(gameId);
     }
@@ -78,10 +95,13 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
     }
 
     @Override
-    public void setUpScoreList(Player[] players) {
+    public void setUpScoreListHeader(Player[] players) {
+
+        this.players = players;
 
         ScoreRowView header = new ScoreRowView(
-                this, players.length,
+                this,
+                players.length,
                 R.layout.header_first_score_list,
                 R.layout.header_cell_score_list,
                 R.layout.separator_score_list
@@ -109,6 +129,32 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
     }
 
     @Override
+    public void setUpScoreList(List<ScoreRow> scores) {
+        scoreList = scores;
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        adapter = new ScoreRowAdapter();
+        recyclerView.setAdapter(adapter);
+
+        if (recyclerView.getItemDecorationAt(0) == null) {
+            DividerItemDecoration itemDecoration = new DividerItemDecoration(
+                    recyclerView.getContext(),
+                    layoutManager.getOrientation()
+            );
+
+            itemDecoration.setDrawable(
+                    ContextCompat.getDrawable(
+                            ScoreListActivity.this,
+                            R.drawable.divider_score_list
+                    )
+            );
+            recyclerView.addItemDecoration(itemDecoration);
+        }
+    }
+
+    @Override
     public void startAddScoreActivity(int dealId) {
         Intent intent = new Intent(this, AddScoreActivity.class);
         intent.putExtra("gameId", gameId);
@@ -121,5 +167,71 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
                 TypedValue.COMPLEX_UNIT_DIP, dip,
                 getResources().getDisplayMetrics()
         );
+    }
+
+    private class ScoreRowAdapter extends RecyclerView.Adapter<ScoreRowAdapter.ScoreRowViewHolder> {
+
+        @Override
+        public ScoreRowViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            ScoreRowView v = new ScoreRowView(
+                    ScoreListActivity.this,
+                    players.length,
+                    R.layout.row_first_score_list,
+                    R.layout.row_cell_score_list,
+                    R.layout.separator_score_list
+            );
+
+            v.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    dipToPixels(48)
+            ));
+
+            v.setGravity(Gravity.CENTER);
+            v.inflateChildren(layoutInflater);
+            return new ScoreRowViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(ScoreRowViewHolder holder, int position) {
+            ScoreRow currentRow = scoreList.get(position);
+            ((TextView) holder.root.getHeaderCellView())
+                    .setText(Integer.toString(currentRow.getDealId()));
+
+            for (int i = 0; i < players.length; i++) {
+                ViewGroup cell = (ViewGroup) holder.root.getScoreCellView(i + 1);
+                if (currentRow.getScores()[i].getDeclared() != -1) {
+                    ((TextView) cell.getChildAt(0))
+                            .setText(Integer.toString(currentRow.getScores()[i].getDeclared()));
+
+                    if (currentRow.getScores()[i].getScoreType() != Score.SCORE_NONE) {
+                        ((TextView) cell.getChildAt(1))
+                                .setText(Integer.toString(currentRow.getScores()[i].getTotalPoints()));
+                    }
+                }
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return scoreList.size();
+        }
+
+        class ScoreRowViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+            private ScoreRowView root;
+
+            public ScoreRowViewHolder(View itemView) {
+                super(itemView);
+                root = (ScoreRowView) itemView;
+                root.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View view) {
+                controller.scoreRowClicked(
+                        scoreList.get(ScoreRowViewHolder.this.getAdapterPosition())
+                );
+            }
+        }
     }
 }

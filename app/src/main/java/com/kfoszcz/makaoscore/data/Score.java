@@ -1,13 +1,13 @@
 package com.kfoszcz.makaoscore.data;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.Ignore;
 
 /**
  * Created by Krzysztof on 2018-03-05.
  */
 
-@Entity
+@Entity(primaryKeys = {"gameId", "playerId", "dealId"})
 public class Score {
 
     public static final int SCORE_SUCCESS = 4;
@@ -16,14 +16,15 @@ public class Score {
     public static final int SCORE_FAIL = 1;
     public static final int SCORE_NONE = 0;
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
     private int gameId;
     private int playerId;
     private int dealId;
     private int points;
     private int declared;
     private int scoreType;
+
+    @Ignore
+    private int totalPoints;
 
     public Score(int gameId, int playerId, int dealId, int points, int declared, int scoreType) {
         this.gameId = gameId;
@@ -34,12 +35,18 @@ public class Score {
         this.scoreType = scoreType;
     }
 
-    public int getId() {
-        return id;
+    public void calculateAndSetScore() {
+        points = calculateScore();
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int calculateScore() {
+        if (scoreType == SCORE_SUCCESS)
+            return declared + 10;
+        if (scoreType == SCORE_HALF_HIGH)
+            return (declared + 12) / 2;
+        if (scoreType == SCORE_HALF_LOW)
+            return (declared + 10) / 2;
+        return 0;
     }
 
     public int getGameId() {
@@ -88,5 +95,13 @@ public class Score {
 
     public void setScoreType(int scoreType) {
         this.scoreType = scoreType;
+    }
+
+    public int getTotalPoints() {
+        return totalPoints;
+    }
+
+    public void setTotalPoints(int totalPoints) {
+        this.totalPoints = totalPoints;
     }
 }

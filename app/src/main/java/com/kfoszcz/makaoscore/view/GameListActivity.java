@@ -74,19 +74,21 @@ public class GameListActivity extends AppCompatActivity implements View.OnClickL
         adapter = new GameAdapter();
         recyclerView.setAdapter(adapter);
 
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(
-                recyclerView.getContext(),
-                layoutManager.getOrientation()
-        );
+        if (recyclerView.getItemDecorationAt(0) == null) {
+            DividerItemDecoration itemDecoration = new DividerItemDecoration(
+                    recyclerView.getContext(),
+                    layoutManager.getOrientation()
+            );
 
-        itemDecoration.setDrawable(
-                ContextCompat.getDrawable(
-                        GameListActivity.this,
-                        R.drawable.divider_horizontal
-                )
-        );
+            itemDecoration.setDrawable(
+                    ContextCompat.getDrawable(
+                            GameListActivity.this,
+                            R.drawable.divider_horizontal
+                    )
+            );
 
-        recyclerView.addItemDecoration(itemDecoration);
+            recyclerView.addItemDecoration(itemDecoration);
+        }
     }
 
     @Override

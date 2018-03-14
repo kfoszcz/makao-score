@@ -1,6 +1,8 @@
 package com.kfoszcz.makaoscore.view;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -15,6 +17,18 @@ public class ScoreRowView extends LinearLayout {
     private int separator;
     private int scoreCell;
     private int scoreCount;
+
+    public ScoreRowView(Context context) {
+        super(context);
+    }
+
+    public ScoreRowView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public ScoreRowView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
 
     public ScoreRowView(Context context, int scoreCount, int headerCell, int scoreCell, int separator) {
         super(context);
