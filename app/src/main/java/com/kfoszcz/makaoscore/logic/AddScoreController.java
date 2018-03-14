@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.kfoszcz.makaoscore.data.MakaoDao;
 import com.kfoszcz.makaoscore.data.Player;
+import com.kfoszcz.makaoscore.data.PlayerIndexWithSum;
 import com.kfoszcz.makaoscore.data.Score;
 import com.kfoszcz.makaoscore.data.ScoreRow;
 import com.kfoszcz.makaoscore.data.ScoreWithPlayer;
@@ -35,10 +36,19 @@ public class AddScoreController {
     }
 
     public void menuSavePressed(ScoreRow scoreRow) {
-        (new SaveScoresTask()).execute(scoreRow);
+        (new SaveScoresTask(false)).execute(scoreRow);
+    }
+
+    public void menuListPressed(ScoreRow scoreRow) {
+        (new SaveScoresTask(true)).execute(scoreRow);
     }
 
     private class SaveScoresTask extends AsyncTask<ScoreRow, Void, Void> {
+        private boolean exitActivity;
+
+        public SaveScoresTask(boolean exitActivity) {
+            this.exitActivity = exitActivity;
+        }
 
         @Override
         protected Void doInBackground(ScoreRow... scoreRows) {
@@ -48,7 +58,10 @@ public class AddScoreController {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-//            view.finishActivity();
+            if (exitActivity)
+                view.finishActivity();
+            else
+                view.showSaveConfirmation();
         }
     }
 
@@ -58,6 +71,7 @@ public class AddScoreController {
         protected Void doInBackground(Integer... integers) {
             Player[] players = dataSource.getPlayersInGame(integers[0]);
             ScoreWithPlayer[] scores = dataSource.getScoresForDeal(integers[0], integers[1]);
+            PlayerIndexWithSum[] totals = dataSource.getTotalPointsForPlayers(integers[0]);
             ScoreRow row = new ScoreRow(integers[1], players.length);
 
             for (ScoreWithPlayer score : scores) {
@@ -74,6 +88,10 @@ public class AddScoreController {
                             -1,
                             Score.SCORE_NONE
                     );
+            }
+
+            for (PlayerIndexWithSum total : totals) {
+                row.getScores()[total.playerIndex].setTotalPoints(total.totalPoints);
             }
 
             playersToSend = new ArrayList<>(Arrays.asList(players));

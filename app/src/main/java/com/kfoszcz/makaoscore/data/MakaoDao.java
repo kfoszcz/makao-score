@@ -74,4 +74,12 @@ public interface MakaoDao {
     @Query("SELECT MIN(Score.dealId) FROM score WHERE gameId = :gameId")
     int getFirstDealIdForGame(int gameId);
 
+    @Query("SELECT playergame.playerIndex, SUM(score.points) AS totalPoints FROM playergame " +
+            "JOIN player ON playergame.playerId = player.id " +
+            "LEFT JOIN score ON player.id = score.playerId AND playergame.gameId = score.gameId " +
+            "WHERE playergame.gameId = :gameId " +
+            "GROUP BY player.id " +
+            "ORDER BY playerIndex ASC")
+    PlayerIndexWithSum[] getTotalPointsForPlayers(int gameId);
+
 }

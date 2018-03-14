@@ -15,4 +15,5 @@ public interface AddScoreInterface {
 
     void finishActivity();
 
+    void showSaveConfirmation();
 }

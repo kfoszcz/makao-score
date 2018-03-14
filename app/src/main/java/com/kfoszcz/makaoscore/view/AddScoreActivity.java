@@ -85,29 +85,35 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
         switch (item.getItemId()) {
 
             case R.id.menu_add_score_list:
-                finish();
+                if (prepareToSaveScore())
+                    controller.menuListPressed(scoreRow);
+                return true;
 
             case R.id.menu_add_score_save:
-                int dealText = dealNumber.getText().toString().isEmpty()
-                        ? 0 : Integer.parseInt(dealNumber.getText().toString());
-                if (dealText <= 0) {
-                    Toast.makeText(this, "Deal number must be > 0", Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-
-                dealId = dealText;
-                for (int i = 0; i < scoreRow.getScores().length; i++) {
-                    scoreRow.getScores()[i].setDealId(dealId);
-                    scoreRow.getScores()[i].calculateAndSetScore();
-                }
-
-                controller.menuSavePressed(scoreRow);
+                if (prepareToSaveScore())
+                    controller.menuSavePressed(scoreRow);
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    public boolean prepareToSaveScore() {
+        int dealText = dealNumber.getText().toString().isEmpty()
+                ? 0 : Integer.parseInt(dealNumber.getText().toString());
+        if (dealText <= 0) {
+            Toast.makeText(this, "Deal number must be > 0", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        dealId = dealText;
+        for (int i = 0; i < scoreRow.getScores().length; i++) {
+            scoreRow.getScores()[i].setDealId(dealId);
+            scoreRow.getScores()[i].calculateAndSetScore();
+        }
+        return true;
     }
 
     public void setUpInputList(List<Player> players, ScoreRow row) {
@@ -146,6 +152,11 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
         finish();
     }
 
+    @Override
+    public void showSaveConfirmation() {
+        Toast.makeText(this, "Scores saved", Toast.LENGTH_SHORT).show();
+    }
+
     private class PlayerScoreAdapter
             extends RecyclerView.Adapter<PlayerScoreAdapter.PlayerScoreViewHolder> {
 
@@ -159,6 +170,7 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
         public void onBindViewHolder(PlayerScoreAdapter.PlayerScoreViewHolder holder, int position) {
             Player currentPlayer = playerList.get(position);
             holder.initial.setText(currentPlayer.getInitial());
+            holder.total.setText(Integer.toString(scoreRow.getScores()[position].getTotalPoints()));
             if (scoreRow.getScores()[position].getDeclared() != -1) {
                 holder.declared.setText(Integer.toString(scoreRow.getScores()[position].getDeclared()));
             }
@@ -174,6 +186,7 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
 
             private ImageButton[] buttons;
             private TextView initial;
+            private TextView total;
             private EditText declared;
             private int scoreType = Score.SCORE_NONE;
 
@@ -181,6 +194,7 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
                 super(itemView);
 
                 initial = itemView.findViewById(R.id.item_add_score_initial);
+                total = itemView.findViewById(R.id.item_add_score_points);
                 declared = itemView.findViewById(R.id.item_add_score_declared);
                 buttons = new ImageButton[5];
                 buttons[4] = itemView.findViewById(R.id.item_add_score_btn_success);
