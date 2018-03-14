@@ -68,4 +68,10 @@ public interface MakaoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void inesrtScores(Score... scores);
 
+    @Query("SELECT MAX(Score.dealId) FROM score WHERE gameId = :gameId")
+    int getLatestDealIdForGame(int gameId);
+
+    @Query("SELECT MIN(Score.dealId) FROM score WHERE gameId = :gameId")
+    int getFirstDealIdForGame(int gameId);
+
 }

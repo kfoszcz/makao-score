@@ -41,7 +41,7 @@ public class AddScoreActivity extends AppCompatActivity implements AddScoreInter
     private List<Player> playerList;
     private ScoreRow scoreRow;
 
-    private static int[] buttonColors = {
+    public static int[] buttonColors = {
             R.color.btnDefault,
             R.color.btnFail,
             R.color.btnHalf,

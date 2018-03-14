@@ -34,12 +34,25 @@ public class ScoreListController {
         (new LoadScoresTask()).execute(gameId);
     }
 
-    public void menuAddPressed() {
-        view.startAddScoreActivity(0);
+    public void menuAddPressed(int gameId) {
+        (new GetLatestDealTask()).execute(gameId);
     }
 
     public void scoreRowClicked(ScoreRow scoreRow) {
         view.startAddScoreActivity(scoreRow.getDealId());
+    }
+
+    private class GetLatestDealTask extends AsyncTask<Integer, Void, Integer> {
+
+        @Override
+        protected Integer doInBackground(Integer... integers) {
+            return dataSource.getLatestDealIdForGame(integers[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            view.startAddScoreActivity(integer + 1);
+        }
     }
 
     private class LoadScoresTask extends AsyncTask<Integer, Void, Void> {

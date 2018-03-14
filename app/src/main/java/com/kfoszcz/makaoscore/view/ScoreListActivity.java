@@ -46,6 +46,8 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
     private Player[] players;
     private List<ScoreRow> scoreList;
 
+    private boolean showScoreColors;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +64,7 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
         );
 
         gameId = getIntent().getIntExtra("gameId", 0);
+        showScoreColors = false;
 
     }
 
@@ -84,8 +87,13 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
+            case R.id.menu_score_list_colors:
+                showScoreColors = !showScoreColors;
+                adapter.notifyDataSetChanged();
+                return true;
+
             case R.id.menu_score_list_add:
-                controller.menuAddPressed();
+                controller.menuAddPressed(gameId);
                 return true;
 
             default:
@@ -206,6 +214,15 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
                     if (currentRow.getScores()[i].getScoreType() != Score.SCORE_NONE) {
                         ((TextView) cell.getChildAt(1))
                                 .setText(Integer.toString(currentRow.getScores()[i].getTotalPoints()));
+                        if (showScoreColors) {
+                            cell.setBackgroundColor(
+                                    getResources().getColor(AddScoreActivity.buttonColors[
+                                            currentRow.getScores()[i].getScoreType()
+                                    ])
+                            );
+                        }
+                        else
+                            cell.setBackgroundColor(Color.TRANSPARENT);
                     }
                 }
             }
