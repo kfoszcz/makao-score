@@ -12,6 +12,7 @@ import com.kfoszcz.makaoscore.view.AddScoreInterface;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -72,6 +73,9 @@ public class AddScoreController {
             Player[] players = dataSource.getPlayersInGame(integers[0]);
             ScoreWithPlayer[] scores = dataSource.getScoresForDeal(integers[0], integers[1]);
             PlayerIndexWithSum[] totals = dataSource.getTotalPointsForPlayers(integers[0]);
+            int firstDeal = dataSource.getFirstDealIdForGame(integers[0]);
+            int rotateLeftBy = (integers[1] - firstDeal + 1) % players.length;
+
             ScoreRow row = new ScoreRow(integers[1], players.length);
 
             for (ScoreWithPlayer score : scores) {
@@ -94,7 +98,14 @@ public class AddScoreController {
                 row.getScores()[total.playerIndex].setTotalPoints(total.totalPoints);
             }
 
-            playersToSend = new ArrayList<>(Arrays.asList(players));
+            List<Player> playerList = Arrays.asList(players);
+            Collections.rotate(playerList, -rotateLeftBy);
+
+            List<Score> scoreList = Arrays.asList(row.getScores());
+            Collections.rotate(scoreList, -rotateLeftBy);
+            row.setScores(scoreList.toArray(new Score[players.length]));
+
+            playersToSend = playerList;
             rowToSend = row;
 
             return null;
