@@ -2,8 +2,13 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_add_score"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:clickable="true"
     tools:context="com.kfoszcz.makaoscore.view.AddScoreActivity">
 
     <RelativeLayout
@@ -35,7 +40,8 @@
             android:gravity="center"
             android:inputType="number"
             tools:text="11"
-            android:layout_toRightOf="@id/txt_add_score_deal" />
+            android:layout_toRightOf="@id/txt_add_score_deal"
+            android:layout_toEndOf="@id/txt_add_score_deal" />
 
     </RelativeLayout>
 

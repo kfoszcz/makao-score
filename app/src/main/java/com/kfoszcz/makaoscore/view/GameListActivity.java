@@ -1,6 +1,7 @@
 package com.kfoszcz.makaoscore.view;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -8,7 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -23,23 +28,20 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class GameListActivity extends AppCompatActivity implements View.OnClickListener, GameViewInterface {
+public class GameListActivity extends AppCompatActivity implements GameViewInterface {
 
     private GameListController controller;
-    private FloatingActionButton addGameButton;
     private RecyclerView recyclerView;
     private LayoutInflater layoutInflater;
     private GameAdapter adapter;
 
     private List<GameWithPlayers> gameList;
+    private boolean swipeToDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_list);
-
-        addGameButton = findViewById(R.id.fab_game_list_add);
-        addGameButton.setOnClickListener(this);
 
         recyclerView = findViewById(R.id.rec_game_list);
         layoutInflater = getLayoutInflater();
@@ -48,6 +50,8 @@ public class GameListActivity extends AppCompatActivity implements View.OnClickL
                 this,
                 MakaoDatabase.getDatabase(getApplicationContext()).dao()
         );
+
+        swipeToDelete = false;
     }
 
     @Override
@@ -57,10 +61,32 @@ public class GameListActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onClick(View view) {
-        if (view.getId() == addGameButton.getId()) {
-            Intent intent = new Intent(this, PlayerListActivity.class);
-            startActivity(intent);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_game_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.menu_game_list_delete:
+                swipeToDelete = !swipeToDelete;
+                if (swipeToDelete)
+                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_delete_red_48dp));
+                else
+                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_delete_white_48dp));
+                return true;
+
+            case R.id.menu_game_list_add:
+                Intent intent = new Intent(this, PlayerListActivity.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
     }
 
@@ -89,6 +115,9 @@ public class GameListActivity extends AppCompatActivity implements View.OnClickL
 
             recyclerView.addItemDecoration(itemDecoration);
         }
+
+        ItemTouchHelper touchHelper = new ItemTouchHelper(createTouchHelperCallback());
+        touchHelper.attachToRecyclerView(recyclerView);
     }
 
     @Override
@@ -126,9 +155,11 @@ public class GameListActivity extends AppCompatActivity implements View.OnClickL
 
             private TextView date;
             private TextView playerCount;
+            private View root;
 
             public GameViewHolder(View itemView) {
                 super(itemView);
+                root = itemView;
                 date =  itemView.findViewById(R.id.txt_game_item_date);
                 playerCount = itemView.findViewById(R.id.txt_game_item_players);
 
@@ -143,6 +174,52 @@ public class GameListActivity extends AppCompatActivity implements View.OnClickL
             }
         }
 
+    }
+
+    ItemTouchHelper.Callback createTouchHelperCallback() {
+        return new ItemTouchHelper.SimpleCallback(
+                0,
+                0
+        ) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                controller.deleteGame(gameList.get(position).game);
+
+                gameList.remove(position);
+                adapter.notifyItemRemoved(position);
+            }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                return swipeToDelete ? ItemTouchHelper.LEFT : 0;
+            }
+
+            @Override
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+                    if (viewHolder instanceof GameAdapter.GameViewHolder) {
+                        GameAdapter.GameViewHolder holder = (GameAdapter.GameViewHolder) viewHolder;
+                        holder.root.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLightAlpha));
+                    }
+                }
+                super.onSelectedChanged(viewHolder, actionState);
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+                if (viewHolder instanceof GameAdapter.GameViewHolder) {
+                    GameAdapter.GameViewHolder holder = (GameAdapter.GameViewHolder) viewHolder;
+                    holder.root.setBackgroundColor(Color.WHITE);
+                }
+            }
+        };
     }
 
 }

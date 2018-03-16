@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.GameListActivity">
+        <activity
+            android:name=".view.GameListActivity"
+            android:label="@string/game_list">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,8 +24,7 @@
             android:label="@string/add_player" />
         <activity
             android:name=".view.ScoreListActivity"
-            android:label="@string/score_list"
-            android:parentActivityName=".view.GameListActivity" />
+            android:label="@string/score_list" />
         <activity
             android:name=".view.AddScoreActivity"
             android:label="@string/add_score" />

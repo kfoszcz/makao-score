@@ -31,6 +31,21 @@ public class GameListController {
         view.startScoreListActivity(game.getId());
     }
 
+    public void deleteGame(Game game) {
+        (new DeleteGameTask()).execute(game);
+    }
+
+    private class DeleteGameTask extends AsyncTask<Game, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Game... games) {
+            dataSource.deletePlayerGameByGameId(games[0].getId());
+            dataSource.deleteScoresByGameId(games[0].getId());
+            dataSource.deleteGame(games[0]);
+            return null;
+        }
+    }
+
     private class LoadGamesTask extends AsyncTask<Void, Void, List<GameWithPlayers>> {
 
         @Override

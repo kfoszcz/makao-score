@@ -85,4 +85,13 @@ public interface MakaoDao {
     @Delete
     void deleteScores(Score... scores);
 
+    @Delete
+    void deleteGame(Game game);
+
+    @Query("DELETE FROM score WHERE gameId = :gameId")
+    void deleteScoresByGameId(int gameId);
+
+    @Query("DELETE FROM playergame WHERE gameId = :gameId")
+    void deletePlayerGameByGameId(int gameId);
+
 }

@@ -43,7 +43,6 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
     private View verticalSeparator;
     private ScoreListController controller;
     private ScoreRowAdapter adapter;
-    private ItemTouchHelper touchHelper;
 
     private int gameId;
     private Player[] players;
@@ -187,7 +186,7 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
             recyclerView.addItemDecoration(itemDecoration);
         }
 
-        touchHelper = new ItemTouchHelper(createTouchHelperCallback());
+        ItemTouchHelper touchHelper = new ItemTouchHelper(createTouchHelperCallback());
         touchHelper.attachToRecyclerView(recyclerView);
 
         recyclerView.scrollToPosition(scoreList.size() - 1);
