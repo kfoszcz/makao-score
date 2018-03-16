@@ -10,7 +10,6 @@ import com.kfoszcz.makaoscore.data.ScoreRow;
 import com.kfoszcz.makaoscore.data.ScoreWithPlayer;
 import com.kfoszcz.makaoscore.view.AddScoreInterface;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

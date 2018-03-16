@@ -1,12 +1,22 @@
 package com.kfoszcz.makaoscore.data;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 
 /**
  * Created by Krzysztof on 2018-03-05.
  */
 
-@Entity(primaryKeys = {"gameId", "playerId"})
+@Entity(
+        primaryKeys = {"gameId", "playerId"},
+        foreignKeys = @ForeignKey(
+                entity = Game.class,
+                parentColumns = "id",
+                childColumns = "gameId",
+                onDelete = ForeignKey.CASCADE,
+                onUpdate = ForeignKey.CASCADE
+        )
+)
 public class PlayerGame {
 
     private int gameId;

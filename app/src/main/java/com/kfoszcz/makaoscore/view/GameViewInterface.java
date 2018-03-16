@@ -1,6 +1,5 @@
 package com.kfoszcz.makaoscore.view;
 
-import com.kfoszcz.makaoscore.data.Game;
 import com.kfoszcz.makaoscore.data.GameWithPlayers;
 
 import java.util.List;

@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 
 import com.kfoszcz.makaoscore.data.MakaoDao;
 import com.kfoszcz.makaoscore.data.Player;
-import com.kfoszcz.makaoscore.data.Score;
 import com.kfoszcz.makaoscore.data.ScoreRow;
 import com.kfoszcz.makaoscore.data.ScoreWithPlayer;
 import com.kfoszcz.makaoscore.view.ScoreViewInterface;

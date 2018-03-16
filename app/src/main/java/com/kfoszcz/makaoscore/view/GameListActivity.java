@@ -3,7 +3,6 @@ package com.kfoszcz.makaoscore.view;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -19,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kfoszcz.makaoscore.R;
-import com.kfoszcz.makaoscore.data.Game;
 import com.kfoszcz.makaoscore.data.GameWithPlayers;
 import com.kfoszcz.makaoscore.data.MakaoDatabase;
 import com.kfoszcz.makaoscore.logic.GameListController;

@@ -16,13 +16,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kfoszcz.makaoscore.R;
 import com.kfoszcz.makaoscore.data.MakaoDatabase;
@@ -30,8 +28,6 @@ import com.kfoszcz.makaoscore.data.Player;
 import com.kfoszcz.makaoscore.data.Score;
 import com.kfoszcz.makaoscore.data.ScoreRow;
 import com.kfoszcz.makaoscore.logic.ScoreListController;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 

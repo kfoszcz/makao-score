@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "5725d9477b90e40c097e75fab9c95879",
+    "identityHash": "bdb38c1b629858f2fda7a64085fda5bb",
     "entities": [
       {
         "tableName": "Player",
@@ -70,7 +70,7 @@
       },
       {
         "tableName": "PlayerGame",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `playerId` INTEGER NOT NULL, `playerIndex` INTEGER NOT NULL, PRIMARY KEY(`gameId`, `playerId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `playerId` INTEGER NOT NULL, `playerIndex` INTEGER NOT NULL, PRIMARY KEY(`gameId`, `playerId`), FOREIGN KEY(`gameId`) REFERENCES `Game`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "gameId",
@@ -99,11 +99,23 @@
           "autoGenerate": false
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "Game",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "gameId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       },
       {
         "tableName": "Score",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `playerId` INTEGER NOT NULL, `dealId` INTEGER NOT NULL, `points` INTEGER NOT NULL, `declared` INTEGER NOT NULL, `scoreType` INTEGER NOT NULL, PRIMARY KEY(`gameId`, `playerId`, `dealId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `playerId` INTEGER NOT NULL, `dealId` INTEGER NOT NULL, `points` INTEGER NOT NULL, `declared` INTEGER NOT NULL, `scoreType` INTEGER NOT NULL, PRIMARY KEY(`gameId`, `playerId`, `dealId`), FOREIGN KEY(`gameId`) REFERENCES `Game`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "gameId",
@@ -151,12 +163,24 @@
           "autoGenerate": false
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "Game",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "gameId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"5725d9477b90e40c097e75fab9c95879\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"bdb38c1b629858f2fda7a64085fda5bb\")"
     ]
   }
 }

@@ -39,8 +39,6 @@ public class GameListController {
 
         @Override
         protected Void doInBackground(Game... games) {
-            dataSource.deletePlayerGameByGameId(games[0].getId());
-            dataSource.deleteScoresByGameId(games[0].getId());
             dataSource.deleteGame(games[0]);
             return null;
         }
