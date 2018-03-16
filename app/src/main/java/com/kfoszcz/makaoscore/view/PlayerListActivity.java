@@ -212,7 +212,7 @@ public class PlayerListActivity extends AppCompatActivity implements PlayerViewI
     ItemTouchHelper.Callback createTouchHelperCallback() {
         return new ItemTouchHelper.SimpleCallback(
                 ItemTouchHelper.DOWN | ItemTouchHelper.UP,
-                ItemTouchHelper.LEFT
+                0
         ) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {

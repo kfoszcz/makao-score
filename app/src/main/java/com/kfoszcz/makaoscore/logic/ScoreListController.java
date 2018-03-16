@@ -42,6 +42,18 @@ public class ScoreListController {
         view.startAddScoreActivity(scoreRow.getDealId());
     }
 
+    public void deleteScoreRow(ScoreRow scoreRow) {
+        (new DeleteScoresTask()).execute(scoreRow);
+    }
+
+    private class DeleteScoresTask extends AsyncTask<ScoreRow, Void, Void> {
+        @Override
+        protected Void doInBackground(ScoreRow... scoreRows) {
+            dataSource.deleteScores(scoreRows[0].getScores());
+            return null;
+        }
+    }
+
     private class GetLatestDealTask extends AsyncTask<Integer, Void, Integer> {
 
         @Override

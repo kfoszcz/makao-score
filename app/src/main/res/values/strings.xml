@@ -14,4 +14,5 @@
     <string name="score_list">Score list</string>
     <string name="menu_list">List</string>
     <string name="menu_colors">Show colors</string>
+    <string name="menu_delete">Swipe to delete</string>
 </resources>

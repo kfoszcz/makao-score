@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -41,12 +43,22 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
     private View verticalSeparator;
     private ScoreListController controller;
     private ScoreRowAdapter adapter;
+    private ItemTouchHelper touchHelper;
 
     private int gameId;
     private Player[] players;
     private List<ScoreRow> scoreList;
 
     private boolean showScoreColors;
+    private boolean swipeToDelete;
+
+    public static int[] backgroundColors = {
+            0,
+            R.color.bgFail,
+            R.color.bgHalf,
+            R.color.bgHalf,
+            R.color.bgSuccess
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +77,7 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
 
         gameId = getIntent().getIntExtra("gameId", 0);
         showScoreColors = false;
+        swipeToDelete = false;
 
     }
 
@@ -74,6 +87,7 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
 
         if (gameId > 0)
             controller.getScoreList(gameId);
+
     }
 
     @Override
@@ -87,8 +101,20 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
+            case R.id.menu_score_list_delete:
+                swipeToDelete = !swipeToDelete;
+                if (swipeToDelete)
+                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_delete_red_48dp));
+                else
+                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_delete_white_48dp));
+                return true;
+
             case R.id.menu_score_list_colors:
                 showScoreColors = !showScoreColors;
+                if (showScoreColors)
+                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_invert_colors_red_48dp));
+                else
+                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_invert_colors_white_48dp));
                 adapter.notifyDataSetChanged();
                 return true;
 
@@ -160,6 +186,11 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
             );
             recyclerView.addItemDecoration(itemDecoration);
         }
+
+        touchHelper = new ItemTouchHelper(createTouchHelperCallback());
+        touchHelper.attachToRecyclerView(recyclerView);
+
+        recyclerView.scrollToPosition(scoreList.size() - 1);
     }
 
     @Override
@@ -216,7 +247,7 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
                                 .setText(Integer.toString(currentRow.getScores()[i].getTotalPoints()));
                         if (showScoreColors) {
                             cell.setBackgroundColor(
-                                    getResources().getColor(AddScoreActivity.buttonColors[
+                                    getResources().getColor(backgroundColors[
                                             currentRow.getScores()[i].getScoreType()
                                     ])
                             );
@@ -250,5 +281,54 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
                 );
             }
         }
+    }
+
+    ItemTouchHelper.Callback createTouchHelperCallback() {
+        return new ItemTouchHelper.SimpleCallback(
+                0,
+                0
+        ) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                controller.deleteScoreRow(scoreList.get(position));
+
+                scoreList.remove(position);
+                adapter.notifyItemRemoved(position);
+
+                if (position < scoreList.size())
+                    controller.getScoreList(gameId);
+            }
+
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                return swipeToDelete ? ItemTouchHelper.LEFT : 0;
+            }
+
+            @Override
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+                    if (viewHolder instanceof ScoreRowAdapter.ScoreRowViewHolder) {
+                        ScoreRowAdapter.ScoreRowViewHolder holder = (ScoreRowAdapter.ScoreRowViewHolder) viewHolder;
+                        holder.root.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLightAlpha));
+                    }
+                }
+                super.onSelectedChanged(viewHolder, actionState);
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+                if (viewHolder instanceof ScoreRowAdapter.ScoreRowViewHolder) {
+                    ScoreRowAdapter.ScoreRowViewHolder holder = (ScoreRowAdapter.ScoreRowViewHolder) viewHolder;
+                    holder.root.setBackgroundColor(Color.WHITE);
+                }
+            }
+        };
     }
 }

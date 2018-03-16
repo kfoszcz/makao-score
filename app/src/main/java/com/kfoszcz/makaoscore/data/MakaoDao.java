@@ -82,4 +82,7 @@ public interface MakaoDao {
             "ORDER BY playerIndex ASC")
     PlayerIndexWithSum[] getTotalPointsForPlayers(int gameId);
 
+    @Delete
+    void deleteScores(Score... scores);
+
 }

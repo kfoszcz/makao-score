@@ -74,6 +74,8 @@ public class AddScoreController {
             ScoreWithPlayer[] scores = dataSource.getScoresForDeal(integers[0], integers[1]);
             PlayerIndexWithSum[] totals = dataSource.getTotalPointsForPlayers(integers[0]);
             int firstDeal = dataSource.getFirstDealIdForGame(integers[0]);
+            if (firstDeal == 0)
+                firstDeal = 1;
             int rotateLeftBy = (integers[1] - firstDeal + 1) % players.length;
 
             ScoreRow row = new ScoreRow(integers[1], players.length);
