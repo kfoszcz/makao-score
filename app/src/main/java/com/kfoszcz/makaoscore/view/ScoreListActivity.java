@@ -43,6 +43,7 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
     private int gameId;
     private Player[] players;
     private List<ScoreRow> scoreList;
+    private int relativeToPlayer;
 
     private boolean showScoreColors;
     private boolean swipeToDelete;
@@ -71,6 +72,7 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
         );
 
         gameId = getIntent().getIntExtra("gameId", 0);
+        relativeToPlayer = -1;
         showScoreColors = false;
         swipeToDelete = false;
 
@@ -152,7 +154,16 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
         lp.addRule(RelativeLayout.BELOW, header.getId());
 
         for (int i = 0; i < players.length; i++) {
-            ((TextView) header.getScoreCellView(i + 1)).setText(players[i].getInitial());
+            TextView playerText = (TextView) header.getScoreCellView(i + 1);
+            playerText.setText(players[i].getInitial());
+            final int j = i;
+            playerText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    relativeToPlayer = (relativeToPlayer != j) ? j : -1;
+                    adapter.notifyDataSetChanged();
+                }
+            });
         }
 
     }
@@ -238,8 +249,36 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
                             .setText(Integer.toString(currentRow.getScores()[i].getDeclared()));
 
                     if (currentRow.getScores()[i].getScoreType() != Score.SCORE_NONE) {
-                        ((TextView) cell.getChildAt(1))
-                                .setText(Integer.toString(currentRow.getScores()[i].getTotalPoints()));
+                        TextView totalText = (TextView) cell.getChildAt(1);
+                        totalText.setTextColor(getResources().getColor(R.color.textPrimary));
+
+                        if (relativeToPlayer > -1) {
+                            int diff = currentRow.getScores()[i].getTotalPoints()
+                                     - currentRow.getScores()[relativeToPlayer].getTotalPoints();
+
+                            if (relativeToPlayer == i) {
+                                totalText.setText("*");
+                            }
+
+                            else if (diff > 0) {
+                                totalText.setTextColor(getResources().getColor(R.color.btnFail));
+                                totalText.setText(Integer.toString(diff));
+                            }
+
+                            else if (diff < 0) {
+                                totalText.setTextColor(getResources().getColor(R.color.btnSuccess));
+                                totalText.setText(Integer.toString(-diff));
+                            }
+
+                            else {
+                                totalText.setText("0");
+                                totalText.setTextColor(getResources().getColor(R.color.scoreDraw));
+                            }
+
+                        }
+                        else
+                            totalText.setText(Integer.toString(currentRow.getScores()[i].getTotalPoints()));
+
                         if (showScoreColors) {
                             cell.setBackgroundColor(
                                     getResources().getColor(backgroundColors[

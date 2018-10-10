@@ -16,4 +16,5 @@
     <string name="menu_colors">Show colors</string>
     <string name="menu_delete">Swipe to delete</string>
     <string name="game_list">Game list</string>
+    <string name="add_game">New game</string>
 </resources>

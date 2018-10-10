@@ -12,6 +12,7 @@
     <color name="btnSuccess">#00c853</color>
     <color name="btnHalf">#f9a825</color>
     <color name="btnFail">#dd2c00</color>
+    <color name="scoreDraw">#1976d2</color>
     <color name="bgSuccess">#8000c853</color>
     <color name="bgHalf">#80f9a825</color>
     <color name="bgFail">#80dd2c00</color>

@@ -36,10 +36,13 @@ public class GameListActivity extends AppCompatActivity implements GameViewInter
     private List<GameWithPlayers> gameList;
     private boolean swipeToDelete;
 
+    private static int recyclerViewPosition;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_list);
+        setTitle(R.string.game_list);
 
         recyclerView = findViewById(R.id.rec_game_list);
         layoutInflater = getLayoutInflater();
@@ -50,6 +53,14 @@ public class GameListActivity extends AppCompatActivity implements GameViewInter
         );
 
         swipeToDelete = false;
+        recyclerViewPosition = 0;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        recyclerViewPosition = ((LinearLayoutManager) recyclerView.getLayoutManager())
+                .findFirstCompletelyVisibleItemPosition();
     }
 
     @Override
@@ -116,6 +127,10 @@ public class GameListActivity extends AppCompatActivity implements GameViewInter
 
         ItemTouchHelper touchHelper = new ItemTouchHelper(createTouchHelperCallback());
         touchHelper.attachToRecyclerView(recyclerView);
+
+        if (recyclerViewPosition > gameList.size())
+            recyclerViewPosition = gameList.size();
+        recyclerView.scrollToPosition(recyclerViewPosition);
     }
 
     @Override
