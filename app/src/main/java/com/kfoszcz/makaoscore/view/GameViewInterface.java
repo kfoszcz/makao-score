@@ -1,5 +1,6 @@
 package com.kfoszcz.makaoscore.view;
 
+import com.kfoszcz.makaoscore.data.GameListItem;
 import com.kfoszcz.makaoscore.data.GameWithPlayers;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public interface GameViewInterface {
 
-    void setUpGameList(List<GameWithPlayers> games);
+    void setUpGameList(List<GameListItem> games);
 
     void startScoreListActivity(int gameId);
 }

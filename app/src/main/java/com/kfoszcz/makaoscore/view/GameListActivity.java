@@ -9,6 +9,9 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,13 +21,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kfoszcz.makaoscore.R;
+import com.kfoszcz.makaoscore.data.GameListItem;
 import com.kfoszcz.makaoscore.data.GameWithPlayers;
 import com.kfoszcz.makaoscore.data.MakaoDatabase;
 import com.kfoszcz.makaoscore.logic.GameListController;
+import com.kfoszcz.makaoscore.logic.PlayerWithWinner;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.ListIterator;
 
 public class GameListActivity extends AppCompatActivity implements GameViewInterface {
 
@@ -33,7 +39,7 @@ public class GameListActivity extends AppCompatActivity implements GameViewInter
     private LayoutInflater layoutInflater;
     private GameAdapter adapter;
 
-    private List<GameWithPlayers> gameList;
+    private List<GameListItem> gameList;
     private boolean swipeToDelete;
 
     private static int recyclerViewPosition;
@@ -100,7 +106,7 @@ public class GameListActivity extends AppCompatActivity implements GameViewInter
     }
 
     @Override
-    public void setUpGameList(List<GameWithPlayers> games) {
+    public void setUpGameList(List<GameListItem> games) {
         gameList = games;
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -150,13 +156,23 @@ public class GameListActivity extends AppCompatActivity implements GameViewInter
 
         @Override
         public void onBindViewHolder(GameViewHolder holder, int position) {
-            GameWithPlayers currentGame = gameList.get(position);
+            GameListItem item = gameList.get(position);
             DateFormat format = new SimpleDateFormat(
-                    "EEE, MMM d, HH:mm",
+                    "dd.MM, HH:mm",
                     getResources().getConfiguration().locale
             );
-            holder.date.setText(format.format(currentGame.game.getStartDate()));
-            holder.playerCount.setText(Integer.toString(currentGame.playerCount));
+            holder.date.setText(format.format(item.game.getStartDate()));
+            ListIterator<PlayerWithWinner> iterator = item.players.listIterator();
+            SpannableStringBuilder sb = new SpannableStringBuilder();
+            while (iterator.hasNext()) {
+                PlayerWithWinner player = iterator.next();
+                sb.append(player.initial);
+                if (player.winner) {
+                    sb.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.btnSuccess)), sb.length() - 1, sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+            holder.players.setText(sb);
+            holder.dealCount.setText(Integer.toString(item.deals));
         }
 
         @Override
@@ -167,15 +183,16 @@ public class GameListActivity extends AppCompatActivity implements GameViewInter
         class GameViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
             private TextView date;
-            private TextView playerCount;
+            private TextView dealCount;
+            private TextView players;
             private View root;
 
             public GameViewHolder(View itemView) {
                 super(itemView);
                 root = itemView;
                 date =  itemView.findViewById(R.id.txt_game_item_date);
-                playerCount = itemView.findViewById(R.id.txt_game_item_players);
-
+                dealCount = itemView.findViewById(R.id.txt_game_item_deals);
+                players = itemView.findViewById(R.id.txt_game_item_players);
                 itemView.setOnClickListener(this);
             }
 

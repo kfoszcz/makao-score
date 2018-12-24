@@ -1,48 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="64dp"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="64dp">
+
+    <ImageView
+        android:id="@+id/imageViewDate"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:src="@drawable/ic_access_time_black_24dp"
+        android:tint="@color/textSecondary" />
 
     <TextView
         android:id="@+id/txt_game_item_date"
-        style="@style/Text.Secondary"
+        style="@style/Text.Small"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Sat, Mar 13, 18:30"
-        android:layout_marginLeft="16dp" />
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        tools:text="Dec 16, 18:30" />
+
+    <ImageView
+        android:id="@+id/imageViewList"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:src="@drawable/ic_format_list_numbered_black_24dp"
+        android:tint="@color/textSecondary" />
+
+    <TextView
+        android:id="@+id/txt_game_item_deals"
+        style="@style/Text.Small"
+        android:layout_width="24dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        tools:text="18" />
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:src="@drawable/ic_people_black_24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/txt_game_item_players"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_weight="1"
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@+id/txt_game_item_players"
-        style="@style/Text.Secondary"
-        android:layout_width="24dp"
+        style="@style/Text.Small"
+        android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="3"
-        android:layout_marginRight="16dp" />
+        tools:text="KMT" />
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

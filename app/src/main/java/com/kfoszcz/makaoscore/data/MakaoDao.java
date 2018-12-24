@@ -65,6 +65,22 @@ public interface MakaoDao {
             "ORDER BY dealId ASC, playerIndex ASC")
     ScoreWithPlayer[] getScoresForDeal(int gameId, int dealId);
 
+    @Query("WITH points AS (\n" +
+        "\tSELECT Score.gameId, Player.initial, SUM(Score.points) AS points, COUNT(*) AS deals FROM Score\n" +
+        "\tJOIN Player ON Score.playerId = Player.id\n" +
+        "\tGROUP BY Score.gameId, Player.id\n" +
+        "\tORDER BY Score.gameId ASC, Player.id ASC\n" +
+        "), winners AS (\n" +
+        "\tSELECT gameId, MAX(points) as best FROM points\n" +
+        "\tGROUP BY gameId\n" +
+        ")\n" +
+        "\n" +
+        "SELECT Game.*, points.initial, points.deals, (points.points == winners.best) AS winner FROM points\n" +
+        "LEFT JOIN winners ON points.gameId = winners.gameId \n" +
+        "JOIN Game ON points.gameId = Game.id\n" +
+        "ORDER BY startDate DESC")
+    List<GameWithWinners> getGamesWithWinners();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void inesrtScores(Score... scores);
 
