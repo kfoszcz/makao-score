@@ -1,6 +1,8 @@
 package com.kfoszcz.makaoscore.view;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
@@ -39,6 +41,7 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
     private View verticalSeparator;
     private ScoreListController controller;
     private ScoreRowAdapter adapter;
+    private SharedPreferences prefs;
 
     private int gameId;
     private Player[] players;
@@ -47,6 +50,8 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
 
     private boolean showScoreColors;
     private boolean swipeToDelete;
+
+    private static final String SHOW_SCORE_COLORS = "SHOW_SCORE_COLORS";
 
     public static int[] backgroundColors = {
             0,
@@ -73,7 +78,8 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
 
         gameId = getIntent().getIntExtra("gameId", 0);
         relativeToPlayer = -1;
-        showScoreColors = false;
+        prefs = getPreferences(Context.MODE_PRIVATE);
+        showScoreColors = prefs.getBoolean(SHOW_SCORE_COLORS, false);
         swipeToDelete = false;
 
     }
@@ -87,12 +93,22 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
 
     }
 
+    private void updateShowScoreItem(MenuItem item) {
+        if (showScoreColors)
+            item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_invert_colors_red_48dp));
+        else
+            item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_invert_colors_white_48dp));
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_score_list, menu);
+        updateShowScoreItem(menu.findItem(R.id.menu_score_list_colors));
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -108,10 +124,8 @@ public class ScoreListActivity extends AppCompatActivity implements ScoreViewInt
 
             case R.id.menu_score_list_colors:
                 showScoreColors = !showScoreColors;
-                if (showScoreColors)
-                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_invert_colors_red_48dp));
-                else
-                    item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_invert_colors_white_48dp));
+                prefs.edit().putBoolean(SHOW_SCORE_COLORS, showScoreColors).apply();
+                updateShowScoreItem(item);
                 adapter.notifyDataSetChanged();
                 return true;
 
