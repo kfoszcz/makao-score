@@ -104,4 +104,17 @@ public interface MakaoDao {
     @Delete
     void deleteGame(Game game);
 
+    @Query("WITH groups AS ( " +
+        "SELECT Game.id, " +
+        "GROUP_CONCAT(Player.initial, '') AS initials, " +
+        "GROUP_CONCAT(Player.id, ',') AS ids " +
+        "FROM Game " +
+        "JOIN PlayerGame ON Game.id = PlayerGame.gameId " +
+        "JOIN Player ON PlayerGame.playerId = Player.id " +
+        "GROUP BY Game.id " +
+        "ORDER BY Player.initial) " +
+        "SELECT ids, initials, COUNT(*) AS gameCount FROM groups " +
+        "GROUP BY initials")
+    List<PlayerGroup> getPlayerGroups();
+
 }
