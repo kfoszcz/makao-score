@@ -118,4 +118,7 @@ public interface MakaoDao {
         "ORDER BY gameCount DESC")
     List<PlayerGroup> getPlayerGroups();
 
+    @Query("SELECT COUNT(*) FROM Game")
+    int getGameCount();
+
 }

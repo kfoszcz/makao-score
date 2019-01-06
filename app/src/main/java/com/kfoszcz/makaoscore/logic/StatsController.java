@@ -32,7 +32,10 @@ public class StatsController {
 
         @Override
         protected List<PlayerGroup> doInBackground(Void... voids) {
-            return dataSource.getPlayerGroups();
+            List<PlayerGroup> groups = dataSource.getPlayerGroups();
+            int gameCount = dataSource.getGameCount();
+            groups.add(0, new PlayerGroup("", "All games", gameCount));
+            return groups;
         }
 
         @Override
