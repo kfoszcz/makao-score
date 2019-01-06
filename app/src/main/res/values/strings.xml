@@ -17,4 +17,6 @@
     <string name="menu_delete">Swipe to delete</string>
     <string name="game_list">Game list</string>
     <string name="add_game">New game</string>
+    <string name="title_activity_stats">Statistics</string>
+    <string name="menu_stats">Stats</string>
 </resources>

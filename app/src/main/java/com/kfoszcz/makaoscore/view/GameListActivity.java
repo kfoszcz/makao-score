@@ -99,6 +99,11 @@ public class GameListActivity extends AppCompatActivity implements GameViewInter
                 startActivity(intent);
                 return true;
 
+            case R.id.menu_game_list_stats:
+                Intent statsIntent = new Intent(this, StatsActivity.class);
+                startActivity(statsIntent);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
 
