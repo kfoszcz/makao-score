@@ -114,7 +114,8 @@ public interface MakaoDao {
         "GROUP BY Game.id " +
         "ORDER BY Player.initial) " +
         "SELECT ids, initials, COUNT(*) AS gameCount FROM groups " +
-        "GROUP BY initials")
+        "GROUP BY initials " +
+        "ORDER BY gameCount DESC")
     List<PlayerGroup> getPlayerGroups();
 
 }
