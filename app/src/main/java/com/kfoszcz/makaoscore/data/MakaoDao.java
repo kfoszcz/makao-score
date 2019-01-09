@@ -121,4 +121,64 @@ public interface MakaoDao {
     @Query("SELECT COUNT(*) FROM Game")
     int getGameCount();
 
+    @Query("WITH list AS ( " +
+        "SELECT id FROM Player " +
+        "WHERE id IN (:players) " +
+        ") SELECT gameId FROM PlayerGame " +
+        "GROUP BY gameId " +
+        "HAVING SUM(playerId NOT IN list) = 0 " +
+        "AND SUM(playerId IN list) = (SELECT COUNT(*) FROM list)")
+    int[] getGamesByPlayers(int[] players);
+
+    @Query("WITH results AS (\n" +
+        "\tSELECT gameId, playerId, SUM(points) AS result, COUNT(DISTINCT dealId) AS deals FROM Score\n" +
+        "\tGROUP BY gameId, playerId\t\n" +
+        "), best AS (\n" +
+        "\tSELECT gameId, MAX(result) AS best FROM results\n" +
+        "\tGROUP BY gameId\n" +
+        "), winners AS (\n" +
+        "\tSELECT playerId, SUM(result = best) AS wins FROM results\n" +
+        "\tJOIN best ON results.gameId = best.gameId\n" +
+        "\tGROUP BY playerId\n" +
+        "), stats AS (\n" +
+        "\tSELECT\n" +
+        "\t\tplayerId,\n" +
+        "\t\tROUND(100.0 * SUM(scoreType = 4) / COUNT(*), 2) AS ok,\n" +
+        "\t\tROUND(100.0 * SUM(scoreType IN (2,3)) / COUNT(*), 2) AS half,\n" +
+        "\t\tROUND(100.0 * SUM(scoreType = 1) / COUNT(*), 2) AS `fail`\n" +
+        "\tFROM Score\n" +
+        "\tGROUP BY playerId\n" +
+        ")\n" +
+        "SELECT Player.*, wins, ok, half, `fail` FROM winners\n" +
+        "JOIN stats ON winners.playerId = stats.playerId\n" +
+        "JOIN Player ON winners.playerId = Player.id\n" +
+        "ORDER BY wins DESC, ok DESC, half DESC, `fail` ASC")
+    List<PlayerWithStats> getPlayersStats();
+
+    @Query("WITH results AS (\n" +
+        "\tSELECT gameId, playerId, SUM(points) AS result, COUNT(DISTINCT dealId) AS deals FROM Score\n" +
+        "\tWHERE gameId IN (:games)\n" +
+        "\tGROUP BY gameId, playerId\t\n" +
+        "), best AS (\n" +
+        "\tSELECT gameId, MAX(result) AS best FROM results\n" +
+        "\tGROUP BY gameId\n" +
+        "), winners AS (\n" +
+        "\tSELECT playerId, SUM(result = best) AS wins FROM results\n" +
+        "\tJOIN best ON results.gameId = best.gameId\n" +
+        "\tGROUP BY playerId\n" +
+        "), stats AS (\n" +
+        "\tSELECT\n" +
+        "\t\tplayerId,\n" +
+        "\t\tROUND(100.0 * SUM(scoreType = 4) / COUNT(*), 2) AS ok,\n" +
+        "\t\tROUND(100.0 * SUM(scoreType IN (2,3)) / COUNT(*), 2) AS half,\n" +
+        "\t\tROUND(100.0 * SUM(scoreType = 1) / COUNT(*), 2) AS `fail`\n" +
+        "\tFROM Score\n" +
+        "\tWHERE gameId IN (:games)\n" +
+        "\tGROUP BY playerId\n" +
+        ")\n" +
+        "SELECT Player.*, wins, ok, half, `fail` FROM winners\n" +
+        "JOIN stats ON winners.playerId = stats.playerId\n" +
+        "JOIN Player ON winners.playerId = Player.id\n" +
+        "ORDER BY wins DESC, ok DESC, half DESC, `fail` ASC")
+    List<PlayerWithStats> getPlayersStats(int[] games);
 }
