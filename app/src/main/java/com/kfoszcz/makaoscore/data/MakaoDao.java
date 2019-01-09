@@ -36,7 +36,7 @@ public interface MakaoDao {
     @Insert
     long insertGame(Game game);
 
-    @Query("SELECT * FROM playergame " +
+    @Query("SELECT player.* FROM playergame " +
             "JOIN player ON playergame.playerId = player.id " +
             "WHERE gameId = :gameId " +
             "ORDER BY playerIndex ASC")
