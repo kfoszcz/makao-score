@@ -143,16 +143,16 @@ public interface MakaoDao {
         "), stats AS (\n" +
         "\tSELECT\n" +
         "\t\tplayerId,\n" +
-        "\t\tROUND(100.0 * SUM(scoreType = 4) / COUNT(*), 2) AS ok,\n" +
-        "\t\tROUND(100.0 * SUM(scoreType IN (2,3)) / COUNT(*), 2) AS half,\n" +
-        "\t\tROUND(100.0 * SUM(scoreType = 1) / COUNT(*), 2) AS `fail`\n" +
+        "\t\t1.0 * SUM(scoreType = 4) / COUNT(*) AS successRate,\n" +
+        "\t\t1.0 * SUM(scoreType IN (2,3)) / COUNT(*) AS halfRate,\n" +
+        "\t\t1.0 * SUM(scoreType = 1) / COUNT(*) AS failRate\n" +
         "\tFROM Score\n" +
         "\tGROUP BY playerId\n" +
         ")\n" +
-        "SELECT Player.*, wins, ok, half, `fail` FROM winners\n" +
+        "SELECT Player.*, wins, successRate, halfRate, failRate FROM winners\n" +
         "JOIN stats ON winners.playerId = stats.playerId\n" +
         "JOIN Player ON winners.playerId = Player.id\n" +
-        "ORDER BY wins DESC, ok DESC, half DESC, `fail` ASC")
+        "ORDER BY wins DESC, successRate DESC, halfRate DESC, failRate ASC")
     List<PlayerWithStats> getPlayersStats();
 
     @Query("WITH results AS (\n" +
@@ -169,16 +169,16 @@ public interface MakaoDao {
         "), stats AS (\n" +
         "\tSELECT\n" +
         "\t\tplayerId,\n" +
-        "\t\tROUND(100.0 * SUM(scoreType = 4) / COUNT(*), 2) AS ok,\n" +
-        "\t\tROUND(100.0 * SUM(scoreType IN (2,3)) / COUNT(*), 2) AS half,\n" +
-        "\t\tROUND(100.0 * SUM(scoreType = 1) / COUNT(*), 2) AS `fail`\n" +
+        "\t\t1.0 * SUM(scoreType = 4) / COUNT(*) AS successRate,\n" +
+        "\t\t1.0 * SUM(scoreType IN (2,3)) / COUNT(*) AS halfRate,\n" +
+        "\t\t1.0 * SUM(scoreType = 1) / COUNT(*) AS failRate\n" +
         "\tFROM Score\n" +
         "\tWHERE gameId IN (:games)\n" +
         "\tGROUP BY playerId\n" +
         ")\n" +
-        "SELECT Player.*, wins, ok, half, `fail` FROM winners\n" +
+        "SELECT Player.*, wins, successRate, halfRate, failRate FROM winners\n" +
         "JOIN stats ON winners.playerId = stats.playerId\n" +
         "JOIN Player ON winners.playerId = Player.id\n" +
-        "ORDER BY wins DESC, ok DESC, half DESC, `fail` ASC")
+        "ORDER BY wins DESC, successRate DESC, halfRate DESC, failRate ASC")
     List<PlayerWithStats> getPlayersStats(int[] games);
 }
